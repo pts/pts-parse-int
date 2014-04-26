@@ -2,50 +2,9 @@
 #include <stdint.h>
 
 // Parses the string p as a decimal number. Leading 0s are allowed. Overflow
-// and underflow is not detected, the '-' sign is accepted for both signed and
-// unsigned integral types.
-//
-// Call it with T as an integral type, otherwise it doesn't compile.
-template<class T>bool parse_dec0(char const *p, T *out) {
-  bool is_negative = false;
-  if (*p == '-') {
-    is_negative = true;
-    ++p;
-  }
-  T n = 0;
-  do {
-    if (*p + 0U - '0' > 9U) return false;  // Not a digit.
-    n = 10 * n + *p++ - '0';
-  } while (*p != '\0');
-  *out = is_negative ? -n : n;
-  return true;  // Success.
-}
-
-// Parses the string p as a decimal number. Leading 0s are allowed. Overflow
-// and underflow is not detected, the '-' sign is accepted only for signed
-// integral types.
-//
-// Call it with T as an integral type, otherwise it doesn't compile.
-template<class T>bool parse_dec1(char const *p, T *out) {
-  // ~(T)~(T)0 compiles for integral types, but it doesn't compile for pointer
-  // or floating point types etc.
-  const bool is_signed = (T)~(T)0 < (T)0;
-  bool is_negative = false;
-  if (is_signed && *p == '-') {
-    is_negative = true;
-    ++p;
-  }
-  T n = 0;
-  do {
-    if (*p + 0U - '0' > 9U) return false;  // Not a digit.
-    n = 10 * n + *p++ - '0';
-  } while (*p != '\0');
-  *out = is_negative ? -n : n;
-  return true;  // Success.
-}
-
-// Parses the string p as a decimal number. Leading 0s are allowed. Overflow
-// and underflow is detected properly.
+// and underflow is detected properly. A leading '-' is allowed iff T is a
+// signed integral type. A leading "+' is not allowed. Leading whitespace is
+// not allowed. -0 is allowed.
 //
 // Call it with T as an integral type, otherwise it doesn't compile.
 template<class T>bool parse_dec(char const *p, T *out) {
