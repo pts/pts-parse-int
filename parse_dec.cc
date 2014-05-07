@@ -22,12 +22,11 @@ template<class T>bool parse_dec(char const *p, T *out) {
   do {
     if (*p + 0U - '0' > 9U) return false;  // Not a digit.
     const char c = *p++ - '0';
-    if (!(n < nmax || (n == nmax && c <= cmax))) {
-      return false;  // Overflow.
-    }
-    n = 10 * n + c;
+    const T nneg = -n;
+    if (nneg > nmax || (nneg == nmax && c > cmax)) return false;  // Overflow.
+    n = 10 * n - c;
   } while (*p != '\0');
-  *out = is_negative ? -n : n;
+  *out = is_negative ? n : -n;
   return true;  // Success.
 }
 
