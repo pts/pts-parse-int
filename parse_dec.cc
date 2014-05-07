@@ -10,7 +10,7 @@
 template<class T>bool parse_dec(char const *p, T *out) {
   // ~(T)~(T)0 compiles for integral types, but it doesn't compile for pointer
   // or floating point types etc.
-  const bool is_signed = (T)~(T)0 < (T)0;
+  const bool is_signed = (T)~(T)0 < (T)1;
   const T nmax = (T)(is_signed ? ~((T)1 << (sizeof(T) * 8 - 1)) : ~(T)0) / 10;
   bool is_negative = false;
   if (is_signed && *p == '-') {
